@@ -32,6 +32,7 @@ local config = {
   BATTERY_SENSOR_NAME = "RxBt", -- Name of the ELRS voltage sensor
   BATTERY_SENSOR_ID = nil,      -- Will be populated automatically
   LINK_SENSOR_NAME = "RQly",    -- Name of the link quality sensor
+  LINK_SENSOR_ID = nil,         -- Will be populated automatically
 
   -- LiPo discharge curve lookup table [voltage, percentage]
   -- This represents a typical 1S LiPo discharge curve

@@ -15,11 +15,6 @@ local link = loadScript(FILE_PATH .. "link.lua")()
 local ui = loadScript(FILE_PATH .. "ui.lua")()
 
 
--- Initialize modules with dependencies
-battery.init(config, utils)
-link.init(config, utils)
-ui.init(config, utils, battery, link)
-
 local function init()
   utils.initConstants()
   battery.init(config, utils)
@@ -46,7 +41,7 @@ end
 
 
 return {
+  init = init,
   run = run,
   background = background,
-  init = init
 }

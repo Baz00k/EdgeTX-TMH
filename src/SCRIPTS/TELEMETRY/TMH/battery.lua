@@ -48,21 +48,23 @@ end
 function battery.findSensor()
     if config.BATTERY_SENSOR_ID then return config.BATTERY_SENSOR_ID end
 
-    -- Try to find the sensor by name
-    local sensor = getValue(config.BATTERY_SENSOR_NAME)
-    if sensor and sensor ~= 0 then
+    -- Try to find the sensor by name and get its ID
+    local fieldInfo = getFieldInfo(config.BATTERY_SENSOR_NAME)
+    if fieldInfo then
+        config.BATTERY_SENSOR_ID = fieldInfo.id
         hasSensor = true
-        return config.BATTERY_SENSOR_NAME
+        return config.BATTERY_SENSOR_ID
     end
 
     -- Try alternative naming schemes
     local alternatives = { "VBAT", "Batt", "Voltage", "RxBatt" }
     for _, name in ipairs(alternatives) do
-        sensor = getValue(name)
-        if sensor and sensor ~= 0 then
+        fieldInfo = getFieldInfo(name)
+        if fieldInfo then
             config.BATTERY_SENSOR_NAME = name
+            config.BATTERY_SENSOR_ID = fieldInfo.id
             hasSensor = true
-            return name
+            return config.BATTERY_SENSOR_ID
         end
     end
 
@@ -294,15 +296,15 @@ end
 
 -- Update battery data (called from background)
 function battery.update()
-    local sensorName = battery.findSensor()
+    local sensorId = battery.findSensor()
 
-    if not sensorName then
+    if not sensorId then
         -- If we don't have a sensor, we can't do much in the background
         return
     end
 
-    -- Get voltage from telemetry
-    local voltage = getValue(sensorName)
+    -- Get voltage from telemetry using the sensor ID for better performance
+    local voltage = getValue(sensorId)
 
     -- Only process if we have a valid voltage reading
     if voltage and voltage > 0 then
@@ -332,6 +334,10 @@ end
 
 function battery.getSensorName()
     return config.BATTERY_SENSOR_NAME
+end
+
+function battery.getSensorId()
+    return config.BATTERY_SENSOR_ID
 end
 
 function battery.isCellDetectionInProgress()

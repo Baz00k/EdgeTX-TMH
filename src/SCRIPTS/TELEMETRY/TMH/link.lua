@@ -29,23 +29,27 @@ function link.init(configModule, utilsModule)
     link.findSensor()
 end
 
--- Find the telemetry sensor by name
+-- Find the telemetry sensor by name and get its ID
 function link.findSensor()
-    -- Try to find the sensor by name
-    local sensor = getValue(config.LINK_SENSOR_NAME)
-    if sensor and sensor ~= 0 then
+    if config.LINK_SENSOR_ID then return config.LINK_SENSOR_ID end
+
+    -- Try to find the sensor by name and get its ID
+    local fieldInfo = getFieldInfo(config.LINK_SENSOR_NAME)
+    if fieldInfo then
+        config.LINK_SENSOR_ID = fieldInfo.id
         hasSensor = true
-        return config.LINK_SENSOR_NAME
+        return config.LINK_SENSOR_ID
     end
 
     -- Try alternative naming schemes
     local alternatives = { "RQly", "RxQly", "LQly" }
     for _, name in ipairs(alternatives) do
-        sensor = getValue(name)
-        if sensor and sensor ~= 0 then
+        fieldInfo = getFieldInfo(name)
+        if fieldInfo then
             config.LINK_SENSOR_NAME = name
+            config.LINK_SENSOR_ID = fieldInfo.id
             hasSensor = true
-            return name
+            return config.LINK_SENSOR_ID
         end
     end
 
@@ -127,15 +131,15 @@ end
 
 -- Update link data (called from background)
 function link.update()
-    local sensorName = link.findSensor()
+    local sensorId = link.findSensor()
 
-    if not sensorName then
+    if not sensorId then
         -- If we don't have a sensor, we can't do much in the background
         return
     end
 
-    -- Get link quality from telemetry
-    local quality = getValue(sensorName)
+    -- Get link quality from telemetry using the sensor ID for better performance
+    local quality = getValue(sensorId)
 
     -- Only process if we have a valid quality reading
     if quality and quality >= 0 then
@@ -156,6 +160,10 @@ end
 
 function link.getSensorName()
     return config.LINK_SENSOR_NAME
+end
+
+function link.getSensorId()
+    return config.LINK_SENSOR_ID
 end
 
 return link
