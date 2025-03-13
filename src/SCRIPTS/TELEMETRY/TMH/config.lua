@@ -8,7 +8,6 @@ local config = {
   AUTO_CELL_DETECT = true,  -- Automatically detect cell count
   FULL_CELL_VOLTAGE = 4.2,  -- Voltage of a fully charged cell
   WARN_CELL_VOLTAGE = 3.7,  -- Warning threshold per cell
-  EMPTY_CELL_VOLTAGE = 3.5, -- Voltage when cell is considered empty
   CRIT_CELL_VOLTAGE = 3.35, -- Critical threshold per cell
 
   -- Cell detection settings

@@ -231,8 +231,6 @@ function battery.getStatus(voltage)
 
     if cellVoltage <= config.CRIT_CELL_VOLTAGE then
         return "critical"
-    elseif cellVoltage <= config.EMPTY_CELL_VOLTAGE then
-        return "empty"
     elseif cellVoltage <= config.WARN_CELL_VOLTAGE then
         return "warning"
     else
