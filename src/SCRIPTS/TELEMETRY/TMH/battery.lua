@@ -46,13 +46,13 @@ end
 
 -- Find the telemetry sensor by name
 function battery.findSensor()
-    if config.SENSOR_ID then return config.SENSOR_ID end
+    if config.BATTERY_SENSOR_ID then return config.BATTERY_SENSOR_ID end
 
     -- Try to find the sensor by name
-    local sensor = getValue(config.SENSOR_NAME)
+    local sensor = getValue(config.BATTERY_SENSOR_NAME)
     if sensor and sensor ~= 0 then
         hasSensor = true
-        return config.SENSOR_NAME
+        return config.BATTERY_SENSOR_NAME
     end
 
     -- Try alternative naming schemes
@@ -60,7 +60,7 @@ function battery.findSensor()
     for _, name in ipairs(alternatives) do
         sensor = getValue(name)
         if sensor and sensor ~= 0 then
-            config.SENSOR_NAME = name
+            config.BATTERY_SENSOR_NAME = name
             hasSensor = true
             return name
         end
@@ -331,7 +331,7 @@ function battery.hasSensor()
 end
 
 function battery.getSensorName()
-    return config.SENSOR_NAME
+    return config.BATTERY_SENSOR_NAME
 end
 
 function battery.isCellDetectionInProgress()

@@ -4,8 +4,8 @@
 
 local config = {
   -- Battery settings
-  CELL_COUNT = 3,           -- Number of cells in your battery
   AUTO_CELL_DETECT = true,  -- Automatically detect cell count
+  CELL_COUNT = 3,           -- Number of cells in your battery, will be detected automatically if AUTO_CELL_DETECT is true
   FULL_CELL_VOLTAGE = 4.2,  -- Voltage of a fully charged cell
   WARN_CELL_VOLTAGE = 3.7,  -- Warning threshold per cell
   CRIT_CELL_VOLTAGE = 3.35, -- Critical threshold per cell
@@ -17,9 +17,8 @@ local config = {
   CELL_DETECTION_TIMEOUT = 10, -- Timeout in seconds
 
   -- Link quality settings
-  WARN_LINK_QUALITY = 70,    -- Warning threshold for link quality (%)
-  CRIT_LINK_QUALITY = 50,    -- Critical threshold for link quality (%)
-  LINK_SENSOR_NAME = "RQly", -- Name of the link quality sensor
+  WARN_LINK_QUALITY = 70, -- Warning threshold for link quality (%)
+  CRIT_LINK_QUALITY = 50, -- Critical threshold for link quality (%)
 
   -- Display settings
   LARGE_FONT = true,   -- Use large font for percentage display
@@ -30,8 +29,9 @@ local config = {
   MIN_ANNOUNCE_INTERVAL = 10, -- Minimum seconds between announcements
 
   -- Sensor settings
-  SENSOR_NAME = "RxBt", -- Name of the ELRS voltage sensor
-  SENSOR_ID = nil,      -- Will be populated automatically
+  BATTERY_SENSOR_NAME = "RxBt", -- Name of the ELRS voltage sensor
+  BATTERY_SENSOR_ID = nil,      -- Will be populated automatically
+  LINK_SENSOR_NAME = "RQly",    -- Name of the link quality sensor
 
   -- LiPo discharge curve lookup table [voltage, percentage]
   -- This represents a typical 1S LiPo discharge curve
