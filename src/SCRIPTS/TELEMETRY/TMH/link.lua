@@ -13,7 +13,6 @@ local lastLinkQuality = 0
 local hasSensor = false
 local lastStatus = "unknown"
 local lastAnnouncementTime = 0
-local lastAnnouncedQuality = -1
 
 -- Initialize the module
 function link.init(configModule, utilsModule)
@@ -21,7 +20,6 @@ function link.init(configModule, utilsModule)
     utils = utilsModule
 
     -- Initialize announcement variables
-    lastAnnouncedQuality = -1
     lastStatus = "unknown"
     lastAnnouncementTime = 0
 
@@ -100,29 +98,12 @@ function link.handleWarnings(status, quality)
         end
     end
 
-    -- Check if quality has changed significantly and is in warning or critical state
-    if status ~= "normal" and status ~= "unknown" then
-        local qualityStep = config.PERCENTAGE_STEP
-        local currentQualityStep = math.floor(quality / qualityStep) * qualityStep
-        local lastQualityStep = math.floor(lastAnnouncedQuality / qualityStep) * qualityStep
-
-        if currentQualityStep ~= lastQualityStep or lastAnnouncedQuality == -1 then
-            shouldAnnounce = true
-            lastAnnouncedQuality = quality
-            message = "quality"
-        end
-    end
-
     -- Announce if needed
     if shouldAnnounce then
         if message == "critical" then
-            playFile("lowsig.wav")
-            playNumber(quality, 0)
-            playFile("percent.wav")
+            playFile("sigcrt.wav")
         elseif message == "warning" then
-            playFile("sigwarn.wav")
-            playNumber(quality, 0)
-            playFile("percent.wav")
+            playFile("siglow.wav")
         end
 
         lastAnnouncementTime = currentTime
