@@ -92,3 +92,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Release files
+release/
+*.tar.gz
+*.zip
