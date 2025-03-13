@@ -55,6 +55,18 @@ function utils.lerp(x, x1, y1, x2, y2)
     return y1 + (y2 - y1) * (x - x1) / (x2 - x1)
 end
 
+-- Apply display margin to percentage values
+-- This makes values close to 100% display as full for better visual representation
+function utils.applyDisplayMargin(value, margin, maxValue)
+    maxValue = maxValue or 100
+
+    if value >= (maxValue - margin) then
+        return maxValue
+    end
+
+    return value
+end
+
 -- Safe table operations
 function utils.safeTableInsert(t, value)
     if table and table.insert then

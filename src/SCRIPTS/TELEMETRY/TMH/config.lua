@@ -23,6 +23,7 @@ local config = {
   -- Display settings
   LARGE_FONT = true,   -- Use large font for percentage display
   ENABLE_VOICE = true, -- Enable voice warnings
+  DISPLAY_MARGIN = 5,  -- Values within this margin of max will display as full (e.g., 95% shows as 100%)
 
   -- Announcement settings
   PERCENTAGE_STEP = 10,       -- Announce every X% change

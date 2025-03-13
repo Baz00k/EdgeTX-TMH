@@ -38,8 +38,11 @@ function ui.drawBatteryIcon(x, y, width, height, percentage, status)
     local termHeight = math.max(4, math.floor(height * 0.4))
     lcd.drawFilledRectangle(x + width, y + (height - termHeight) / 2, termWidth, termHeight, frameColor)
 
+    -- Apply margin to percentage using the utility function
+    local displayPercentage = utils.applyDisplayMargin(percentage, config.DISPLAY_MARGIN)
+
     -- Draw fill level
-    local fillWidth = math.max(1, math.floor(((width - 2) * percentage) / 100))
+    local fillWidth = math.max(1, math.floor(((width - 2) * displayPercentage) / 100))
     lcd.drawFilledRectangle(x + 1, y + 1, fillWidth, height - 2, fillColor)
 end
 
@@ -55,6 +58,9 @@ function ui.drawSignalIcon(x, y, width, height, quality, status)
         fillColor = utils.getColor("error")
     end
 
+    -- Apply margin to quality using the utility function
+    local displayQuality = utils.applyDisplayMargin(quality, config.DISPLAY_MARGIN)
+
     -- Draw signal strength bars (3 bars)
     local barCount = 3
     local barWidth = math.floor(width / barCount)
@@ -67,12 +73,13 @@ function ui.drawSignalIcon(x, y, width, height, quality, status)
         local barY = y + (maxBarHeight - barHeight)
 
         -- Determine if this bar should be filled based on signal quality
-        local barFilled = (i / barCount) * 100 <= quality
+        local barFilled = (i / barCount) * 100 <= displayQuality
 
         if barFilled then
             lcd.drawFilledRectangle(barX, barY, barWidth - barSpacing, barHeight, fillColor)
         else
-            lcd.drawRectangle(barX, barY, barWidth - barSpacing, barHeight, frameColor)
+            lcd.drawLine(barX, barY + barHeight - 1, barX + barWidth - barSpacing - 1, barY + barHeight - 1, frameColor,
+                utils.SOLID)
         end
     end
 end
