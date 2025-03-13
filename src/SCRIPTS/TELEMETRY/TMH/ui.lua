@@ -177,8 +177,9 @@ function ui.render(event)
             -- Draw section label
             lcd.drawText(5, 5, "BATT", utils.SMLSIZE, utils.LEFT)
 
-            -- Draw waiting message centered in the section
-            lcd.drawText(sectionCenterX, sectionCenterY, "Waiting for data...", utils.SMLSIZE + utils.CENTER)
+            -- Draw waiting message centered in the section, split into two lines
+            lcd.drawText(sectionCenterX, sectionCenterY - 8, "Waiting for", utils.SMLSIZE + utils.CENTER)
+            lcd.drawText(sectionCenterX, sectionCenterY + 8, "data...", utils.SMLSIZE + utils.CENTER)
         else
             -- Calculate battery percentage and status
             local percentage = battery.getPercentage()
@@ -212,8 +213,9 @@ function ui.render(event)
             -- Draw section label
             lcd.drawText(halfWidth + 5, 5, "LINK", utils.SMLSIZE, utils.LEFT)
 
-            -- Draw waiting message centered in the section
-            lcd.drawText(sectionCenterX, sectionCenterY, "Waiting for data...", utils.SMLSIZE + utils.CENTER)
+            -- Draw waiting message centered in the section, split into two lines
+            lcd.drawText(sectionCenterX, sectionCenterY - 8, "Waiting for", utils.SMLSIZE + utils.CENTER)
+            lcd.drawText(sectionCenterX, sectionCenterY + 8, "data...", utils.SMLSIZE + utils.CENTER)
         else
             -- Calculate link status
             local status = link.getStatus(quality)
