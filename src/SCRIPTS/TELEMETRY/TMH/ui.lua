@@ -38,7 +38,6 @@ function ui.drawBatteryIcon(x, y, width, height, percentage, status)
     local termHeight = math.max(4, math.floor(height * 0.4))
     lcd.drawFilledRectangle(x + width, y + (height - termHeight) / 2, termWidth, termHeight, frameColor)
 
-    -- Apply margin to percentage using the utility function
     local displayPercentage = utils.applyDisplayMargin(percentage, config.DISPLAY_MARGIN)
 
     -- Draw fill level
@@ -58,7 +57,6 @@ function ui.drawSignalIcon(x, y, width, height, quality, status)
         fillColor = utils.getColor("error")
     end
 
-    -- Apply margin to quality using the utility function
     local displayQuality = utils.applyDisplayMargin(quality, config.DISPLAY_MARGIN)
 
     -- Draw signal strength bars (3 bars)
@@ -108,7 +106,7 @@ function ui.drawBatterySection(x, y, width, height, voltage, percentage, status)
     lcd.drawText(percentX, infoY, string.format("%.1fV/%dS", voltage, battery.getCellCount()),
         utils.SMLSIZE + utils.CENTER)
 
-    -- Show cell detection status if in progress (more concise)
+    -- Show cell detection status if in progress
     if battery.isCellDetectionInProgress() then
         local detectionY = infoY + 12
         local detectionText = string.format("Detecting: %d/%d",
@@ -137,10 +135,12 @@ function ui.drawLinkSection(x, y, width, height, quality, status)
     local percentY = y + 20
     lcd.drawText(percentX, percentY, quality .. "%", fontSize + utils.CENTER)
 
-    -- Draw status text (more concise)
+    -- Draw status text
     local statusY = percentY + (fontSize == utils.XXLSIZE and 30 or 20)
     local statusText = "OK"
-    if status == "warning" then
+    if status == "unknown" then
+        statusText = "UNKOWN"
+    elseif status == "warning" then
         statusText = "WARN"
     elseif status == "critical" then
         statusText = "CRIT"
@@ -155,11 +155,11 @@ function ui.render(event)
     -- Calculate vertical split
     local halfWidth = math.floor(utils.screenWidth / 2)
     local dividerX = halfWidth
-    local contentY = 0                            -- Start from the top to maximize space
-    local contentHeight = utils.screenHeight - 15 -- Leave space for instructions at bottom
+    local contentY = 0                       -- Start from the top to maximize space
+    local contentHeight = utils.screenHeight -- Use full screen height
 
     -- Draw vertical divider
-    lcd.drawLine(dividerX, contentY, dividerX, utils.screenHeight - 15, utils.WHITE, utils.SOLID)
+    lcd.drawLine(dividerX, contentY, dividerX, utils.screenHeight, utils.WHITE, utils.SOLID)
 
     -- Battery section (left side)
     if not battery.hasSensor() then
@@ -184,7 +184,7 @@ function ui.render(event)
             -- Draw section label
             lcd.drawText(5, 5, "BATT", utils.SMLSIZE, utils.LEFT)
 
-            -- Draw waiting message centered in the section, split into two lines
+            -- Draw waiting message centered in the section
             lcd.drawText(sectionCenterX, sectionCenterY - 8, "Waiting for", utils.SMLSIZE + utils.CENTER)
             lcd.drawText(sectionCenterX, sectionCenterY + 8, "data...", utils.SMLSIZE + utils.CENTER)
         else
@@ -220,7 +220,7 @@ function ui.render(event)
             -- Draw section label
             lcd.drawText(halfWidth + 5, 5, "LINK", utils.SMLSIZE, utils.LEFT)
 
-            -- Draw waiting message centered in the section, split into two lines
+            -- Draw waiting message centered in the section
             lcd.drawText(sectionCenterX, sectionCenterY - 8, "Waiting for", utils.SMLSIZE + utils.CENTER)
             lcd.drawText(sectionCenterX, sectionCenterY + 8, "data...", utils.SMLSIZE + utils.CENTER)
         else
@@ -232,11 +232,7 @@ function ui.render(event)
         end
     end
 
-    -- Show reset instructions at the bottom (more concise)
-    if config.AUTO_CELL_DETECT then
-        lcd.drawText(utils.screenWidth / 2, utils.screenHeight - 12, "ENTER: Reset cell detect",
-            utils.SMLSIZE + utils.CENTER)
-    end
+    -- Show reset instructions at the bottom has been removed to use full screen
 end
 
 return ui
