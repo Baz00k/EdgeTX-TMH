@@ -30,10 +30,8 @@ local config = {
   MIN_ANNOUNCE_INTERVAL = 10, -- Minimum seconds between announcements
 
   -- Sensor settings
-  BATTERY_SENSOR_NAME = "RxBt", -- Name of the ELRS voltage sensor
-  BATTERY_SENSOR_ID = nil,      -- Will be populated automatically
-  LINK_SENSOR_NAME = "RQly",    -- Name of the link quality sensor
-  LINK_SENSOR_ID = nil,         -- Will be populated automatically
+  BATTERY_SENSOR_NAMES = { "RxBt", "VBAT", "Batt", "Voltage", "RxBatt" }, -- Possible names for the battery voltage sensor
+  LINK_SENSOR_NAMES = { "RQly", "RxQly", "LQly" },                        -- Possible names for the link quality sensor
 
   -- LiPo discharge curve lookup table [voltage, percentage]
   -- This represents a typical 1S LiPo discharge curve

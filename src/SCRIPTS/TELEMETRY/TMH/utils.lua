@@ -55,6 +55,27 @@ function utils.lerp(x, x1, y1, x2, y2)
     return y1 + (y2 - y1) * (x - x1) / (x2 - x1)
 end
 
+-- Find a sensor by name and return its ID
+-- Takes a list of sensor names to try and returns the first found sensor ID and name
+-- Returns nil, nil if no sensor is found
+function utils.findSensor(sensorNames)
+    if type(sensorNames) == "string" then
+        -- If a single string is provided, convert it to a table
+        sensorNames = { sensorNames }
+    end
+
+    -- Try each sensor name in the list
+    for _, name in ipairs(sensorNames) do
+        local fieldInfo = getFieldInfo(name)
+        if fieldInfo then
+            return fieldInfo.id, name
+        end
+    end
+
+    -- No sensor found
+    return nil, nil
+end
+
 -- Apply display margin to percentage values
 -- This makes values close to 100% display as full for better visual representation
 function utils.applyDisplayMargin(value, margin, maxValue)

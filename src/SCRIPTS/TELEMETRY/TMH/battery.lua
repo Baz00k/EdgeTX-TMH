@@ -15,7 +15,8 @@ local lastAnnouncedPercentage = -1
 local lastStatus = "unknown"
 local lastAnnouncementTime = 0
 local cellCount = 0
-local hasSensor = false
+local sensorId = nil
+local sensorName = nil
 
 -- Cell count detection variables
 local cellDetectionSamples = {}
@@ -32,6 +33,9 @@ function battery.init(configModule, utilsModule)
     -- Set initial cell count from config
     cellCount = config.CELL_COUNT
 
+    -- Try to find the sensor during initialization
+    sensorId, sensorName = utils.findSensor(config.BATTERY_SENSOR_NAMES)
+
     -- Initialize cell detection
     battery.resetCellDetection()
 
@@ -39,36 +43,6 @@ function battery.init(configModule, utilsModule)
     lastAnnouncedPercentage = -1
     lastStatus = "unknown"
     lastAnnouncementTime = 0
-
-    -- Try to find the sensor during initialization
-    battery.findSensor()
-end
-
--- Find the telemetry sensor by name
-function battery.findSensor()
-    if config.BATTERY_SENSOR_ID then return config.BATTERY_SENSOR_ID end
-
-    -- Try to find the sensor by name and get its ID
-    local fieldInfo = getFieldInfo(config.BATTERY_SENSOR_NAME)
-    if fieldInfo then
-        config.BATTERY_SENSOR_ID = fieldInfo.id
-        hasSensor = true
-        return config.BATTERY_SENSOR_ID
-    end
-
-    -- Try alternative naming schemes
-    local alternatives = { "VBAT", "Batt", "Voltage", "RxBatt" }
-    for _, name in ipairs(alternatives) do
-        fieldInfo = getFieldInfo(name)
-        if fieldInfo then
-            config.BATTERY_SENSOR_NAME = name
-            config.BATTERY_SENSOR_ID = fieldInfo.id
-            hasSensor = true
-            return config.BATTERY_SENSOR_ID
-        end
-    end
-
-    return nil
 end
 
 -- Detect cell count based on voltage readings
@@ -296,14 +270,10 @@ end
 
 -- Update battery data (called from background)
 function battery.update()
-    local sensorId = battery.findSensor()
-
-    if not sensorId then
-        -- If we don't have a sensor, we can't do much in the background
+    if sensorId == nil then
         return
     end
 
-    -- Get voltage from telemetry using the sensor ID for better performance
     local voltage = getValue(sensorId)
 
     -- Only process if we have a valid voltage reading
@@ -329,15 +299,15 @@ function battery.getCellCount()
 end
 
 function battery.hasSensor()
-    return hasSensor
+    return sensorId ~= nil
 end
 
 function battery.getSensorName()
-    return config.BATTERY_SENSOR_NAME
+    return sensorName
 end
 
 function battery.getSensorId()
-    return config.BATTERY_SENSOR_ID
+    return sensorId
 end
 
 function battery.isCellDetectionInProgress()

@@ -1,6 +1,6 @@
 --[[
   Battery Percentage Telemetry Script for EdgeTX
-  Version: 1.0.0
+  Version: 1.0.1
   Author: Jakub Buzuk
   License: MIT
 ]]

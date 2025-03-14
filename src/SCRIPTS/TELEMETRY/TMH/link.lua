@@ -10,48 +10,22 @@ local utils
 
 -- Runtime variables
 local lastLinkQuality = 0
-local hasSensor = false
 local lastStatus = "unknown"
 local lastAnnouncementTime = 0
+local sensorId = nil
+local sensorName = nil
 
 -- Initialize the module
 function link.init(configModule, utilsModule)
     config = configModule
     utils = utilsModule
 
+    -- Try to find the sensor during initialization
+    sensorId, sensorName = utils.findSensor(config.LINK_SENSOR_NAMES)
+
     -- Initialize announcement variables
     lastStatus = "unknown"
     lastAnnouncementTime = 0
-
-    -- Try to find the sensor during initialization
-    link.findSensor()
-end
-
--- Find the telemetry sensor by name and get its ID
-function link.findSensor()
-    if config.LINK_SENSOR_ID then return config.LINK_SENSOR_ID end
-
-    -- Try to find the sensor by name and get its ID
-    local fieldInfo = getFieldInfo(config.LINK_SENSOR_NAME)
-    if fieldInfo then
-        config.LINK_SENSOR_ID = fieldInfo.id
-        hasSensor = true
-        return config.LINK_SENSOR_ID
-    end
-
-    -- Try alternative naming schemes
-    local alternatives = { "RQly", "RxQly", "LQly" }
-    for _, name in ipairs(alternatives) do
-        fieldInfo = getFieldInfo(name)
-        if fieldInfo then
-            config.LINK_SENSOR_NAME = name
-            config.LINK_SENSOR_ID = fieldInfo.id
-            hasSensor = true
-            return config.LINK_SENSOR_ID
-        end
-    end
-
-    return nil
 end
 
 -- Get the link status (normal, warning, critical)
@@ -68,7 +42,7 @@ function link.getStatus(quality)
 end
 
 -- Play warning sounds if needed
-function link.handleWarnings(status, quality)
+function link.handleWarnings(status)
     if not config.ENABLE_VOICE then return end
 
     local currentTime = utils.getTimeSeconds()
@@ -112,21 +86,17 @@ end
 
 -- Update link data (called from background)
 function link.update()
-    local sensorId = link.findSensor()
-
-    if not sensorId then
-        -- If we don't have a sensor, we can't do much in the background
+    if sensorId == nil then
         return
     end
 
-    -- Get link quality from telemetry using the sensor ID for better performance
     local quality = getValue(sensorId)
 
     -- Only process if we have a valid quality reading
     if quality and quality >= 0 then
         lastLinkQuality = quality
         local status = link.getStatus(quality)
-        link.handleWarnings(status, quality)
+        link.handleWarnings(status)
     end
 end
 
@@ -136,15 +106,15 @@ function link.getLinkQuality()
 end
 
 function link.hasSensor()
-    return hasSensor
+    return sensorId ~= nil
 end
 
 function link.getSensorName()
-    return config.LINK_SENSOR_NAME
+    return sensorName
 end
 
 function link.getSensorId()
-    return config.LINK_SENSOR_ID
+    return sensorId
 end
 
 return link
