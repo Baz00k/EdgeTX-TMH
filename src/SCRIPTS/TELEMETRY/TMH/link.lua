@@ -30,7 +30,7 @@ end
 
 -- Get the link status (normal, warning, critical)
 function link.getStatus(quality)
-    if not quality or quality < 0 then return "unknown" end
+    if not quality or quality <= 0 then return "unknown" end
 
     if quality <= config.CRIT_LINK_QUALITY then
         return "critical"
